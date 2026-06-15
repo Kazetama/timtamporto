@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
+
+const roles = ["Full-Stack Web Developer", "Cloud Engineer", "DevOps"];
 
 export default function Home() {
-  const roles = ["Full-Stack Web Developer", "Cloud Engineer", "DevOps"];
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
   const [currentText, setCurrentText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -28,7 +30,7 @@ export default function Home() {
     }, typeSpeed);
 
     return () => clearTimeout(timeout);
-  }, [currentText, isDeleting, currentRoleIndex, roles]);
+  }, [currentText, isDeleting, currentRoleIndex]);
 
   return (
     <div className="relative w-full min-h-screen pt-12 md:pt-24 pb-12 px-6 md:px-12 flex flex-col items-center md:items-start overflow-hidden">
@@ -80,9 +82,12 @@ export default function Home() {
 
           {/* Profile Picture */}
           <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden bg-muted flex-shrink-0 border-4 border-background shadow-xl ring-1 ring-border group self-start md:self-auto">
-             <img 
+            <Image 
               src="https://github.com/kazetama.png" 
               alt="Profile" 
+              fill
+              sizes="(max-width: 768px) 96px, 128px"
+              priority
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
             {/* Inner Ring Glow */}
@@ -95,7 +100,7 @@ export default function Home() {
         {/* TYPING ANIMATION ROLE */}
         {/* ============================== */}
         <h2 className="text-xl md:text-3xl text-muted-foreground mb-6 flex items-center min-h-[40px] font-medium">
-          I'm a{" "}
+          I&apos;m a{" "}
           <span className="ml-[6px] md:ml-[8px] font-bold bg-gradient-to-r from-blue-500 to-teal-400 bg-clip-text text-transparent">
             {currentText}
           </span>

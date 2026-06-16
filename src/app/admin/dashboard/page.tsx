@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { User } from "@supabase/supabase-js";
 
+export const dynamic = "force-dynamic";
+
 interface DbProject {
   slug: string;
   title: string;

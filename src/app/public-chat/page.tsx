@@ -2,20 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-
-interface Message {
-  id: string;
-  sender: string;
-  avatar: string;
-  content: string;
-  timestamp: string;
-  isSelf: boolean;
-  replyTo?: {
-    id: string;
-    sender: string;
-    content: string;
-  };
-}
+import { Message } from "./types";
 
 export default function PublicChatPage() {
   const [messages, setMessages] = useState<Message[]>([

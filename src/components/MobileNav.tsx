@@ -75,7 +75,7 @@ export function MobileNav() {
                 <div className="flex items-center gap-4 group cursor-pointer mt-2">
                   <div className="relative w-14 h-14 rounded-full overflow-hidden bg-muted border border-border flex-shrink-0 transition-transform duration-300 group-hover:scale-105 group-active:scale-95">
                     <Image
-                      src="/images/profile.png"
+                      src="/images/profile.webp"
                       alt="Profile Picture"
                       fill
                       sizes="56px"

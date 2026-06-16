@@ -2,28 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-
-interface GithubUserData {
-  login: string;
-  avatar_url: string;
-  name: string;
-  company: string | null;
-  bio: string | null;
-  public_repos: number;
-  followers: number;
-  following: number;
-  location: string | null;
-  created_at: string;
-}
-
-interface GithubRepo {
-  name: string;
-  language: string | null;
-  stargazers_count: number;
-  html_url: string;
-  description: string | null;
-  updated_at: string;
-}
+import { DISCORD_ID } from "@/constants/portfolio";
+import { 
+  GithubUserData, 
+  GithubRepo, 
+  ContributionDay, 
+  SpotifyData, 
+  RawGithubRepo, 
+  DenoGithubContributions 
+} from "./types";
 
 const FALLBACK_USER: GithubUserData = {
   login: "Kazetama",
@@ -90,11 +77,6 @@ const FALLBACK_REPOS: GithubRepo[] = [
 ];
 
 // Helper to generate contribution values for the calendar grid
-interface ContributionDay {
-  date: string;
-  count: number;
-  level: 0 | 1 | 2 | 3 | 4;
-}
 
 const generateContributionData = (): ContributionDay[] => {
   const data: ContributionDay[] = [];
@@ -150,33 +132,60 @@ const generateContributionData = (): ContributionDay[] => {
   return data;
 };
 
+
+
 export default function DashboardPage() {
   const [userData, setUserData] = useState<GithubUserData>(FALLBACK_USER);
   const [repos, setRepos] = useState<GithubRepo[]>(FALLBACK_REPOS);
   const [contributions, setContributions] = useState<ContributionDay[]>(() => generateContributionData());
   const [totalContributions, setTotalContributions] = useState<number>(271);
+  const [spotifyData, setSpotifyData] = useState<SpotifyData>({
+    isPlaying: false,
+    song: "Currently Offline",
+    artist: "Not playing anything on Spotify right now. Check back when I'm coding!",
+    album: "",
+    albumArtUrl: "",
+  });
 
-  interface RawGithubRepo {
-    fork: boolean;
-    stargazers_count: number;
-    name: string;
-    language: string | null;
-    html_url: string;
-    description: string | null;
-    updated_at: string;
-  }
+  useEffect(() => {
+    async function fetchSpotifyStatus() {
+      try {
+        const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            const data = json.data;
+            if (data.listening_to_spotify && data.spotify) {
+              setSpotifyData({
+                isPlaying: true,
+                song: data.spotify.song,
+                artist: data.spotify.artist,
+                album: data.spotify.album,
+                albumArtUrl: data.spotify.album_art_url,
+              });
+            } else {
+              setSpotifyData({
+                isPlaying: false,
+                song: "Currently Offline",
+                artist: "Not playing anything on Spotify right now. Check back when I'm coding!",
+                album: "",
+                albumArtUrl: "",
+              });
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching Spotify status:", err);
+      }
+    }
 
-  interface DenoContributionDay {
-    color: string;
-    contributionCount: number;
-    contributionLevel: string;
-    date: string;
-  }
+    fetchSpotifyStatus();
+    const interval = setInterval(fetchSpotifyStatus, 15000); // Poll every 15 seconds
 
-  interface DenoGithubContributions {
-    totalContributions: number;
-    contributions: DenoContributionDay[][];
-  }
+    return () => clearInterval(interval);
+  }, []);
+
+
 
   useEffect(() => {
     async function fetchGithubData() {
@@ -536,25 +545,45 @@ export default function DashboardPage() {
               <div>
                 <div className="flex items-center gap-2 mb-4">
                   <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    {spotifyData.isPlaying && (
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    )}
+                    <span className={`relative inline-flex rounded-full h-2 w-2 ${spotifyData.isPlaying ? "bg-green-500" : "bg-zinc-500"}`}></span>
                   </span>
                   <span className="text-xs font-semibold text-foreground uppercase tracking-wider">Listening Status</span>
                 </div>
                 
-                <h3 className="text-base font-bold text-card-foreground mb-1">Currently Offline</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Not playing anything on Spotify right now. Check back when I&apos;m coding!
+                <h3 className="text-base font-bold text-card-foreground mb-1 line-clamp-1" title={spotifyData.song}>
+                  {spotifyData.song}
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2" title={spotifyData.artist}>
+                  {spotifyData.artist}
                 </p>
               </div>
               
               <div className="mt-8 border-t border-border/40 pt-4 flex items-center gap-3">
-                <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center text-muted-foreground text-sm font-bold border border-border">
-                  🎧
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold text-foreground">Recent Favorite</span>
-                  <span className="text-[11px] text-muted-foreground line-clamp-1">Retro synth wave playlists</span>
+                {spotifyData.isPlaying && spotifyData.albumArtUrl ? (
+                  <div className="relative w-10 h-10 rounded-lg overflow-hidden border border-border flex-shrink-0">
+                    <Image 
+                      src={spotifyData.albumArtUrl}
+                      alt={spotifyData.album}
+                      fill
+                      sizes="40px"
+                      className="object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center text-muted-foreground text-sm font-bold border border-border flex-shrink-0">
+                    🎧
+                  </div>
+                )}
+                <div className="flex flex-col min-w-0 flex-1">
+                  <span className="text-xs font-bold text-foreground">
+                    {spotifyData.isPlaying ? "Listening to Spotify" : "Recent Favorite"}
+                  </span>
+                  <span className="text-[11px] text-muted-foreground line-clamp-1">
+                    {spotifyData.isPlaying ? spotifyData.album : "Retro synth wave playlists"}
+                  </span>
                 </div>
               </div>
             </div>

@@ -38,15 +38,15 @@ export async function proxy(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
 
-  // Protect the admin routes - redirect unauthenticated users to /kaze-admin
+  // Protect the admin routes - redirect unauthenticated users to /login
   if (pathname.startsWith("/admin") && !user) {
     const url = request.nextUrl.clone();
-    url.pathname = "/kaze-admin";
+    url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
   // Redirect authenticated users away from the login page to the admin dashboard
-  if (pathname.startsWith("/kaze-admin") && user) {
+  if (pathname.startsWith("/login") && user) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin/dashboard";
     return NextResponse.redirect(url);

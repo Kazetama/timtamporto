@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     siteName: "Teuku Aryansyah Pratama Portfolio",
     images: [
       {
-        url: "/images/Profile.png",
+        url: "/images/profile.webp",
         width: 800,
         height: 800,
         alt: "Teuku Aryansyah Pratama (Kazeetama)",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     title: "Teuku Aryansyah Pratama (Kazeetama) | Dev",
     description: "Full-Stack Web Developer from Indonesia. Check out my latest modern web projects!",
     creator: "@kazeetama",
-    images: ["/images/Profile.png"],
+    images: ["/images/profile.webp"],
   },
   robots: {
     index: true,

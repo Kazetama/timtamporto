@@ -32,7 +32,7 @@ export function Sidebar() {
       <div className="flex flex-col mb-6 group cursor-pointer mt-2">
         <div className="relative w-16 h-16 rounded-full overflow-hidden bg-muted mb-4 ml-2 border border-border flex-shrink-0 transition-transform duration-300 group-hover:scale-105 group-active:scale-95">
           <Image
-            src="/images/profile.png"
+            src="/images/profile.webp"
             alt="Profile Picture"
             fill
             sizes="(max-width: 768px) 100vw, 64px"

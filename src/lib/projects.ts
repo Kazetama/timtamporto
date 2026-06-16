@@ -24,7 +24,7 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/kazetama/timtamporto",
     liveUrl: "https://segera-di-deploy.vercel.app",
     status: "completed",
-    imageUrl: "/images/timtam_porto.png",
+    imageUrl: "/images/timtam_porto.webp",
     role: "UI/UX & Full-Stack Developer",
     features: [
       "Optimasi SEO lengkap & sitemap otomatis dinamis.",
@@ -44,7 +44,7 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/kazetama",
     liveUrl: "#",
     status: "completed",
-    imageUrl: "/images/udinus_portal.png",
+    imageUrl: "/images/udinus_portal.webp",
     role: "Lead Back-End & System Architect",
     features: [
       "Dashboard statistik akademik dosen & mahasiswa.",
@@ -63,7 +63,7 @@ export const projects: Project[] = [
     tags: ["React", "Supabase", "TypeScript", "Tailwind CSS"],
     githubUrl: "https://github.com/kazetama",
     status: "in-progress",
-    imageUrl: "/images/supachat.png",
+    imageUrl: "/images/supachat.webp",
     role: "Full-Stack Developer",
     features: [
       "Sinkronisasi pesan real-time instan berlatensi rendah.",
@@ -82,7 +82,7 @@ export const projects: Project[] = [
     tags: ["Docker", "GitHub Actions", "AWS", "Nginx", "Linux"],
     githubUrl: "https://github.com/kazetama",
     status: "completed",
-    imageUrl: "/images/devops_infra.png",
+    imageUrl: "/images/devops_infra.webp",
     role: "DevOps & Cloud Engineer",
     features: [
       "Pipeline build & deploy otomatis terintegrasi GitHub Actions.",

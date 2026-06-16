@@ -1,22 +1,48 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { projects } from "@/lib/projects";
+import { createDbClient } from "@/lib/supabase/db";
+
+export const dynamic = "force-dynamic";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-// Pre-generate static paths for all projects at build time
-export async function generateStaticParams() {
-  return projects.map((project) => ({
-    slug: project.slug,
-  }));
-}
-
 export default async function ProjectDetailsPage({ params }: PageProps) {
   const { slug } = await params;
-  const project = projects.find((p) => p.slug === slug);
+  let project = null;
+
+  try {
+    const db = createDbClient();
+    const { data, error } = await db
+      .from("projects")
+      .select("*")
+      .eq("slug", slug)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Error loading project details from Supabase:", error);
+    } else if (data) {
+      project = {
+        slug: data.slug,
+        title: data.title,
+        description: data.description,
+        longDescription: data.long_description,
+        tags: data.tags || [],
+        githubUrl: data.github_url,
+        liveUrl: data.live_url,
+        status: data.status,
+        imageUrl: data.image_url,
+        role: data.role,
+        features: data.features || [],
+        challenges: data.challenges,
+        solutions: data.solutions,
+      };
+    }
+  } catch (err) {
+    console.error("System error loading project details:", err);
+  }
 
   if (!project) {
     notFound();
@@ -92,34 +118,36 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
           <div className="lg:col-span-2 flex flex-col gap-8">
             
             {/* Overview */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 animate-in fade-in duration-500">
               <h2 className="text-lg font-bold text-foreground border-b border-border pb-2">
                 Project Overview
               </h2>
-              <p className="text-[15px] sm:text-base text-muted-foreground leading-relaxed text-pretty">
+              <p className="text-[15px] sm:text-base text-muted-foreground leading-relaxed text-pretty whitespace-pre-wrap">
                 {project.longDescription}
               </p>
             </div>
 
             {/* Key Features */}
-            <div className="flex flex-col gap-4">
-              <h2 className="text-lg font-bold text-foreground border-b border-border pb-2">
-                Key Features
-              </h2>
-              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-sm text-muted-foreground">
-                {project.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-start gap-2.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-blue-500 shrink-0 mt-0.5">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {project.features && project.features.length > 0 && (
+              <div className="flex flex-col gap-4 animate-in fade-in duration-500">
+                <h2 className="text-lg font-bold text-foreground border-b border-border pb-2">
+                  Key Features
+                </h2>
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-sm text-muted-foreground">
+                  {project.features.map((feature: string, idx: number) => (
+                    <li key={idx} className="flex items-start gap-2.5">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-blue-500 shrink-0 mt-0.5">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Challenges & Solutions */}
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-5 animate-in fade-in duration-500">
               <h2 className="text-lg font-bold text-foreground border-b border-border pb-2">
                 Challenges & Solutions
               </h2>
@@ -128,7 +156,7 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
                   <h4 className="text-xs font-bold text-amber-500 uppercase tracking-wider flex items-center gap-1.5">
                     ⚠️ Challenge
                   </h4>
-                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
                     {project.challenges}
                   </p>
                 </div>
@@ -137,7 +165,7 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
                   <h4 className="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-1.5">
                     🚀 Solution
                   </h4>
-                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
                     {project.solutions}
                   </p>
                 </div>
@@ -147,7 +175,7 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
           </div>
 
           {/* Sidebar Metadata & Links */}
-          <div className="flex flex-col gap-6 lg:sticky lg:top-24">
+          <div className="flex flex-col gap-6 lg:sticky lg:top-24 animate-in fade-in duration-500">
             
             {/* Info Card */}
             <div className="border border-border bg-card rounded-2xl p-6 flex flex-col gap-5 shadow-sm">
@@ -166,19 +194,21 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
                   <span className="text-sm font-semibold text-foreground capitalize">{project.status === "in-progress" ? "In Progress" : project.status}</span>
                 </div>
 
-                <div className="flex flex-col">
-                  <span className="text-[11px] text-muted-foreground uppercase font-bold tracking-wider">Technologies</span>
-                  <div className="flex flex-wrap gap-1 mt-1.5">
-                    {project.tags.map((tag) => (
-                      <span 
-                        key={tag} 
-                        className="text-[10px] font-medium text-muted-foreground bg-muted px-2.5 py-0.5 rounded border border-border"
-                      >
-                        {tag}
-                      </span>
-                    ))}
+                {project.tags && project.tags.length > 0 && (
+                  <div className="flex flex-col">
+                    <span className="text-[11px] text-muted-foreground uppercase font-bold tracking-wider">Technologies</span>
+                    <div className="flex flex-wrap gap-1 mt-1.5">
+                      {project.tags.map((tag: string) => (
+                        <span 
+                          key={tag} 
+                          className="text-[10px] font-medium text-muted-foreground bg-muted px-2.5 py-0.5 rounded border border-border"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Action Buttons */}

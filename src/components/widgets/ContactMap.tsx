@@ -13,7 +13,7 @@ export default function ContactMap() {
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
-    let timeoutId: any;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
     // Initialize map if not already initialized
     if (!mapRef.current) {

@@ -8,7 +8,7 @@ import {
   Folder01Icon,
   DashboardSquare01Icon,
   BubbleChatIcon,
-  Link01Icon,
+  Mail01Icon,
   ArrowUpRight01Icon,
 } from "@hugeicons/core-free-icons";
 import { usePathname } from "next/navigation";
@@ -19,7 +19,7 @@ const navItems = [
   { name: "Projects", href: "/projects", icon: Folder01Icon, hoverRotate: "rotate-6" },
   { name: "Dashboard", href: "/dashboard", icon: DashboardSquare01Icon, hoverRotate: "-rotate-3" },
   { name: "Public Chat", href: "/public-chat", icon: BubbleChatIcon, hoverRotate: "rotate-12" },
-  { name: "Social Links", href: "/social-links", icon: Link01Icon, hoverRotate: "-rotate-12" },
+  { name: "Contact", href: "/contact", icon: Mail01Icon, hoverRotate: "-rotate-12" },
 ];
 
 export function Sidebar() {

@@ -9,7 +9,7 @@ import {
   Folder01Icon,
   DashboardSquare01Icon,
   BubbleChatIcon,
-  Link01Icon,
+  Mail01Icon,
   ArrowDown01Icon,
   ArrowUp01Icon,
   ArrowUpRight01Icon
@@ -28,7 +28,7 @@ const navItems = [
   { name: "Projects", href: "/projects", icon: Folder01Icon },
   { name: "Dashboard", href: "/dashboard", icon: DashboardSquare01Icon },
   { name: "Public Chat", href: "/public-chat", icon: BubbleChatIcon },
-  { name: "Social Links", href: "/social-links", icon: Link01Icon },
+  { name: "Contact", href: "/contact", icon: Mail01Icon },
 ];
 
 export function MobileNav() {
